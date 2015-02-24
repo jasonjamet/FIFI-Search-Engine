@@ -1,0 +1,55 @@
+html, body{
+	background-color: #F0F0F0;
+	height: 100%;
+}
+
+p{
+	color: black;
+}
+
+#site{
+	width: 800px;
+	margin:auto;
+	height:100%;
+}
+
+#moteur{
+}
+
+
+#titleRecherche{
+	font-weight: bold;
+	font-size: 60px;
+	text-align: center;
+}
+
+span.title1{
+	color:blue;
+}
+
+span.title2{
+	color:red;
+}
+
+span.title3{
+	color:green;
+}
+
+#recherche{
+	text-align: center;
+}
+#recherche input{
+	width:500px;
+	height:20px;
+}
+
+#valider{
+	text-align: center;
+}
+
+
+#astuce{
+	font-size: 12px;
+	text-align: center;
+	margin-top: 30px;
+}
