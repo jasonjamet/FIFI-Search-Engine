@@ -14,27 +14,30 @@ class Dictionary_class {
     $currentWordInDoc=0;
 
 
-    $dirname = '../Ressources/AP/';
-    $dir = opendir($dirname);
-    while($file = readdir($dir)) {
-      if($file != '.' && $file != '..' && !is_dir($dirname.$file)) {
-        if (!$fp = fopen($dirname.$file,"r")) {
-          throw new Exception("Attribut Introuvable !", 1);
-        }
-        else {
+    // $dirname = '../Ressources/AP/';
+    // $dir = opendir($dirname);
+    // while($file = readdir($dir)) {
+    //   if($file != '.' && $file != '..' && !is_dir($dirname.$file)) {
+    //     if (!$fp = fopen($dirname.$file,"r")) {
+    //       throw new Exception("Attribut Introuvable !", 1);
+    //     }
+    $fp = fopen("../AP890101","r");
+        //else {
           while(!feof($fp)) {
             $line = fgets($fp);
             $arrayWord = explode(" ", $line);
             if($arrayWord[0]=="<DOCNO>") {
-              $currentDoc = array_splice($arrayWord, 1, -1);
+              $currentDoc = array_splice($arrayWord, 1, -1)[0];
             }
 
             if(trim($line)=="<TEXT>") {
 
               while(trim($line)!="</TEXT>") {
                 foreach ($arrayWord as $word) {
-                  $this->addWordToDictionary($word, $currentDoc, $currentWordInDoc);
-                  $currentWordInDoc++;
+                  if($word!="" || $word!=" ") {
+                    $this->addWordToDictionary(stem_english($word), $currentDoc, $currentWordInDoc);
+                    $currentWordInDoc++;
+                  }
                 }
 
                 $line = fgets($fp);
@@ -42,7 +45,6 @@ class Dictionary_class {
 
               }
             }
-            var_dump($this->_dictionary);
 
 
 
@@ -64,22 +66,26 @@ class Dictionary_class {
             // }
           }
           fclose($fp);
-        }
-        break;
-      }
-    }
-    closedir($dir);
+
+        //}
+        var_dump($this->_dictionary);
+        return 0;
+      //}
+    //}
+    //closedir($dir);
 
 
   }
 
   private function addWordToDictionary($word, $fileName, $position) {
     foreach ($this->_dictionary as $objWordFromDictionary) {
+      echo "ok";
       foreach ($objWordFromDictionary as $keyWordFromDictionary => $fileNameAndPosFromDictionary) {
         if($keyWordFromDictionary == $word) {
-          foreach ($fileNameAndPosFromDictionary as $keyFileName => $Position) {
+          foreach ($fileNameAndPosFromDictionary as $keyFileName => $PositionFromDictionary) {
             if($keyFileName == $fileName) {
-              $Position[] = $position;
+              $PositionFromDictionary[] = $position;
+
               return true;
             }
           }
@@ -88,7 +94,8 @@ class Dictionary_class {
         }
       }
     }
-    $objWordFromDictionary[]=array($word, array($fileName , array($position)));
+    $this->_dictionary[]=array($word => array($fileName => array($position)));
+    //var_dump($this->_dictionary);
   }
 
   private function Attribut_Existe($name) {
