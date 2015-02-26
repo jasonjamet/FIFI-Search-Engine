@@ -1,16 +1,11 @@
 html, body{
 	background-color: #F0F0F0;
-	height: 100%;
 }
 
-p{
-	color: black;
-}
 
 #site{
 	width: 800px;
 	margin:auto;
-	height:100%;
 }
 
 #moteur{
@@ -21,6 +16,10 @@ p{
 	font-weight: bold;
 	font-size: 60px;
 	text-align: center;
+}
+
+#titleRecherche a{
+	text-decoration: none;
 }
 
 span.title1{
@@ -52,4 +51,28 @@ span.title3{
 	font-size: 12px;
 	text-align: center;
 	margin-top: 30px;
+}
+
+#astuce a {
+	text-decoration: none;
+	color: red;
+}
+
+#astuce a:hover {
+	color: orange;
+}
+
+#Informations_Submit
+{
+	text-align: center;
+}
+
+.rouge 
+{
+	color: red;
+}
+
+.green
+{
+	color: green;
 }
