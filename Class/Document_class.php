@@ -1,5 +1,5 @@
 <?php
-
+/*
 class Document {
   private $_Nom
 
@@ -27,5 +27,5 @@ class Document {
       return $e->getMessage();
     }
   }
-}
+}*/
 ?>

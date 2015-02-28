@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.0.10deb1
+-- version 4.0.9deb1
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le: Jeu 26 Février 2015 à 01:15
--- Version du serveur: 5.5.41-0ubuntu0.14.04.1
--- Version de PHP: 5.5.9-1ubuntu4.6
+-- Généré le: Sam 28 Février 2015 à 12:53
+-- Version du serveur: 5.5.33-1
+-- Version de PHP: 5.5.6-1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -28,10 +28,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `document` (
   `id` bigint(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  `name` varchar(50) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -40,10 +39,15 @@ CREATE TABLE IF NOT EXISTS `document` (
 --
 
 CREATE TABLE IF NOT EXISTS `position` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `id_word` bigint(20) NOT NULL,
   `id_document` bigint(20) NOT NULL,
-  `position` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `position` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_document` (`id_document`),
+  KEY `id_word` (`id_word`),
+  KEY `id_document_2` (`id_document`)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 MAX_ROWS=1000000000 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -52,12 +56,10 @@ CREATE TABLE IF NOT EXISTS `position` (
 --
 
 CREATE TABLE IF NOT EXISTS `word` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
   `word` varchar(30) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
-  UNIQUE KEY `word` (`word`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  UNIQUE KEY `id` (`id`)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

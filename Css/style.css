@@ -4,7 +4,7 @@ html, body{
 
 
 #site{
-	width: 800px;
+	width: 1100px;
 	margin:auto;
 }
 
@@ -31,7 +31,15 @@ span.title2{
 }
 
 span.title3{
+	color:gold;
+}
+
+span.title4{
 	color:green;
+}
+
+span.title5{
+	color:purple;
 }
 
 #recherche{
@@ -51,6 +59,7 @@ span.title3{
 	font-size: 12px;
 	text-align: center;
 	margin-top: 30px;
+	float:right;
 }
 
 #astuce a {
@@ -76,3 +85,46 @@ span.title3{
 {
 	color: green;
 }
+
+.orange{
+	color:#F07000;
+}
+
+#Informations_Submit a
+{
+	text-decoration: none;
+	color:blue;
+	font-weight: bold;
+}
+
+#Informations_Submit a:hover{
+	text-decoration: underline;
+}
+
+
+
+.Counter_Doc{
+	color:grey;
+	float:left;
+	font-size:12px;
+}
+
+
+#Liste_Doc ul{
+	list-style-type: none;
+	float:left;
+	width:450px;
+	text-align: left;
+}
+
+span.Contenu_Doc{
+	font-size: 12px;
+}
+
+#Contenu{
+	width:1100px;
+	margin: auto;
+}
+
+
+
