@@ -39,36 +39,56 @@ function getArrayOfDocByArrayWord($arrayWord) {
   global $bdd;
 
   $pagination = 15;
-  $limit_start = ($page - 1) * $pagination;
+  $nb_total=30;
+  //$limit_start = ($page - 1) * $pagination;
 
-  $qMarks = str_repeat('?,', count($arrayWord) - 1) . '?';
-  /*$response = $bdd->prepare("SELECT distinct name
-                              FROM document
-                              WHERE id IN (
-                                              SELECT distinct id_document
-                                              FROM position
-                                              WHERE id_word IN (
-                                                                  SELECT distinct id
-                                                                  FROM word
-                                                                  WHERE word IN ($qMarks)
-                                                                 )
-                                             )
-                            ");*/
+  $qMarks = str_repeat("AND id_document IN (	SELECT id_document
+                                              FROM `position`
+                                              WHERE id_word = ( 		SELECT id
+                                                                    FROM word
+                                                                    WHERE word = ? )
+                                            )", count($arrayWord) - 1);
 
-  $response = $bdd->prepare(" SELECT `name`
-                              FROM `document`
-                              INNER JOIN `position`
-                              INNER JOIN `word`
-                              WHERE word.word IN ($qMarks)
-                              AND document.id = position.id_document
-                              AND word.id = position.id_word
+  $response = $bdd->prepare("   SELECT id_document
+                                FROM position
+                                WHERE id_word = (
+                                                    SELECT id
+                                                    FROM word
+                                                    WHERE word = ?
+                                                   )
+                                $qMarks
 
                             ");
 
+
+  //$qMarks = str_repeat('?,', count($arrayWord) - 1) . '?';
+  // $response = $bdd->prepare(" SELECT `name`
+  //                             FROM `document`
+  //                             INNER JOIN `position`
+  //                             INNER JOIN `word`
+  //                             WHERE word.word IN ($qMarks)
+  //                             AND document.id = position.id_document
+  //                             AND word.id = position.id_word
+  //
+  //                           ");
+
   $response->execute($arrayWord);
+  //Compte le nombre d'occurence de chaque fichier tableau associatif [id] => [count]
   $res = array_count_values($response->fetchAll(PDO::FETCH_COLUMN, 0));
+  //Tri par count
   arsort($res);
   $response->closeCursor();
+
+  //Associe id à un nom
+  $qMarks = str_repeat('?,', count($res) - 1) . '?';
+  $response = $bdd->prepare(" SELECT name
+                              FROM document
+                              WHERE id IN ($qMarks)");
+
+  $response->execute(array_keys($res));
+  $res = array_combine($response->fetchAll(PDO::FETCH_COLUMN, 0), array_values($res));
+  $response->closeCursor();
+
 
   $nb_pages = ceil($nb_total/ $pagination);
 
@@ -127,7 +147,7 @@ function showDocWithResult($arWord, $doc) {
   foreach($arWord as $word) {
     $arrayPos = array_merge($arrayPos, getArrayOfPosByWordAndDoc($word, $doc));
   }
-  $fp = fopen("Ressources/OP/$file","r");
+  $fp = fopen("Ressources/AP/$file","r");
   while(!feof($fp)) {
     $line = fgets($fp);
     $arrayWord = explode(" ", $line);
