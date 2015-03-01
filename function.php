@@ -10,9 +10,7 @@ catch (Exception $e) {
 // print_r(getArrayOfDocByArrayWord(array("north", "korea")));
 //getNumberOfWordByArrayDoc(array("north", "korea"), getArrayOfDocByArrayWord(array("north", "korea")));
 //getMinimalDocWithResult("north", "AP890101-0015");
-function getArrayPosByWordAndDoc($word, $doc){
-
-}
+//getArrayOfPosByArrayWordAndDoc(array("junior", "steven", "traveled", "miles"), "AP891218-0001");
 
 
 function getArrayOfDocByWord($word) {
@@ -80,14 +78,17 @@ function getArrayOfDocByArrayWord($arrayWord) {
   $response->closeCursor();
 
   //Associe id à un nom
-  $qMarks = str_repeat('?,', count($res) - 1) . '?';
-  $response = $bdd->prepare(" SELECT name
-                              FROM document
-                              WHERE id IN ($qMarks)");
+  if(count($res)!=0) {
+    $qMarks = str_repeat('?,', count($res) - 1) . '?';
+    $response = $bdd->prepare(" SELECT name
+    FROM document
+    WHERE id IN ($qMarks)");
 
-  $response->execute(array_keys($res));
-  $res = array_combine($response->fetchAll(PDO::FETCH_COLUMN, 0), array_values($res));
-  $response->closeCursor();
+    $response->execute(array_keys($res));
+    $res = array_combine($response->fetchAll(PDO::FETCH_COLUMN, 0), array_values($res));
+    $response->closeCursor();
+  }
+
 
 
   $nb_pages = ceil($nb_total/ $pagination);
@@ -138,6 +139,48 @@ function getArrayOfPosByWordAndDoc($word, $doc) {
   }
   $response->closeCursor();
   return $res;
+}
+
+function getArrayOfPosByArrayWordAndDoc($arrayWord, $doc) {
+  global $bdd;
+  $qMarks_word = str_repeat('?,', count($arrayWord) - 1) . '?';
+
+  $response = $bdd->prepare(" SELECT `position`, `id_word`
+                              FROM `position`
+                              WHERE `id_word` IN (
+                                                  SELECT `id`
+                                                  FROM `word`
+                                                  WHERE `word` IN ($qMarks_word)
+                                                )
+                              AND `id_document` IN(
+                                                    SELECT `id`
+                                                    FROM `document`
+                                                    WHERE `name` = ?
+                              )
+                              ORDER BY `position`.`position` ASC
+  ");
+  $arrayWord[]=$doc;
+  $response->execute($arrayWord);
+  $res = array();
+  while ($donnees = $response->fetch()) {
+    $res[$donnees[1]][] = $donnees[0];
+  }
+  print_r($res);
+  $response->closeCursor();
+  getReferenceValueByArrayPos($res);
+  return $res;
+}
+function getReferenceValueByArrayPos($arrayOfArrayPos) {
+  echo "<br />";
+  echo "<br />";
+  echo "<br />";
+  sort($arrayOfArrayPos);
+  print_r($arrayOfArrayPos);
+  foreach($arrayOfArrayPos as $arrayPos) {
+    foreach($arrayPos as $pos) {
+
+    }
+  }
 }
 
 function showDocWithResult($arWord, $doc) {
