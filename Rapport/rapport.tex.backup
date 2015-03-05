@@ -7,9 +7,6 @@
 \usepackage{amssymb}
 \usepackage{lmodern}
 \usepackage{graphicx}
-\usepackage{color}
-\usepackage{listings}
-\usepackage{fancyhdr}
 
 \usepackage{geometry}
 
@@ -27,10 +24,11 @@
   \begin{titlepage}
   \centering
       {\large \textsc{Faculté des Sciences}}\\
-      \textsc{Recherche Documentaire}\\
+      \textsc{Langages de Script}\\
     \vspace{1cm}
-      \includegraphics[width=0.25\textwidth]{finefound.eps}
+      \includegraphics[width=0.25\textwidth]{ua.eps}
       \hfill
+      \includegraphics[width=0.35\textwidth]{rails.eps}\\
     \vspace{1cm}
       {\large\textbf{	\@date\\
        Master 1 Informatique}}\\
@@ -48,7 +46,15 @@
 \makeatother
 
 
+\pagestyle{fancy}
 
+\renewcommand{\headheight}{13pt}  
+\renewcommand{\headrulewidth}{2pt} 
+\renewcommand{\footrulewidth}{2pt} 
+\renewcommand{\headsep}{15pt}
+\lhead{}
+\chead{}
+\rhead{\leftmark }
 
 
 \newpage
@@ -74,19 +80,7 @@ Plusieurs librairies ont dûes être installées :
  \item prout3
 \end{itemize}
 
-Pour la gestion des données, et l'insertion de ces dernières dans l'interface, nous avons utilisé \verb|Mysql|.
-
 
 \section{Fonctionnalités implémentées}
-
-\subsection{Indexation}
-
-
-\subsection{Traitement des requêtes}
-
-
-\subsection{Pertinence des Documents}
-
-\subsection{Interface de recherche}
 
 \end{document}

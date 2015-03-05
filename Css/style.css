@@ -59,7 +59,6 @@ span.title5{
 	font-size: 12px;
 	text-align: center;
 	margin-top: 30px;
-	float:right;
 }
 
 #astuce a {
@@ -109,11 +108,21 @@ span.title5{
 	font-size:12px;
 }
 
+.Result_NoFound{
+	text-align: left;
+}
+
+.No_Found{
+	font-weight: bold;
+	float:left;
+	text-align: left;
+	color:#000020;
+}
 
 #Liste_Doc ul{
 	list-style-type: none;
 	float:left;
-	width:450px;
+	width:520px;
 	text-align: left;
 }
 
@@ -121,10 +130,75 @@ span.Contenu_Doc{
 	font-size: 12px;
 }
 
-#Contenu{
-	width:1100px;
-	margin: auto;
+.clear{
+	clear:both;
 }
 
+/*-----------------------FUNCTION Nouvelle recherche----------------------------*/
+
+#New_Spelling{
+	float:left;
+}
+
+span.Try_Spelling{
+	color:red;
+}
+
+/*-------------------------Fin Function Nouvelle recherche----------------------*/
 
 
+/*-------------------------PAGINATION----------------------*/
+
+.pagination {
+    line-height:2em;
+}
+.pagination a,
+.pagination span {
+    padding:0.2em 0.5em;
+}
+.pagination a {
+    border:1px solid #9AAFE5;
+    color:#105CB6;
+    text-decoration:none;
+}
+.pagination a:hover {
+    border:1px solid #296BB5;
+    color:#000031;
+}
+.pagination .prevnext {
+    font-weight:bold;
+}
+.pagination span.disabled { 
+    border:1px solid #DDDDDD;
+    color:#999999;
+}
+.pagination span.current {
+    border:1px solid #2E6AB1;
+    background-color:#2E6AB1;
+    color:#ffffff;
+    font-weight:bold;
+}
+
+/*-------------------------FIN PAGINATION----------------------*/
+
+
+/*-------------------------Page Resultat-----------------------*/
+#Page_Result{
+	width:1000px;
+	margin:auto;
+}
+
+.Title_Result{
+	width:150px;
+	margin:auto;
+	text-align: center;
+	text-decoration: underline;
+}
+
+.Contenu_Result{
+	text-align: justify;
+}
+
+.center{
+	text-align: center;
+}

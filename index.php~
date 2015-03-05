@@ -1,4 +1,0 @@
-<?php
-echo stem_english('judges');
-?>
-

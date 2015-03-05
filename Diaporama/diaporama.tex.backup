@@ -1,0 +1,42 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+
+\usetheme{Warsaw}
+
+
+\colorlet{titre}{yellow}
+\definecolor{vertmoyen}{RGB}{51,110,23}
+\definecolor{rouge}{HTML}{DD0000}
+
+\title{Recherche Documentaire}
+\author{Racine Mattieu - Jamet Jason - Grandjean Guillaume}
+\date{}
+
+\begin{document}
+
+    \begin{frame}[allowframebreaks] %Si trop de texte, le met sur une autre page en plus
+    \frametitle{Recherche Documentaire}
+    \begin{center}
+    \includegraphics[width=0.25\textwidth]{finefound.eps}
+
+    le meilleur moteur de recherche Documentaire !    
+    \end{center}
+    \end{frame}
+    
+    
+    \begin{frame}
+     
+     \tableofcontents
+     
+    \end{frame}
+
+    
+    
+    
+    
+    
+
+\end{document}

@@ -1,0 +1,5 @@
+\beamer@endinputifotherversion {3.24pt}
+\select@language {french}
+\beamer@sectionintoc {1}{Pr\IeC {\'e}sentation du projet}{4}{0}{1}
+\beamer@sectionintoc {2}{Fonctionnalit\IeC {\'e}s impl\IeC {\'e}ment\IeC {\'e}es}{5}{0}{2}
+\beamer@sectionintoc {3}{Recherche Optimale}{6}{0}{3}

@@ -1,9 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?php 
+echo "VOIR ERREUR 9 JQUERY";
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
 <head>
-	<title>Recherche Documentaire</title>
+	<title>Fine Found</title>
 	<link href="Css/style.css" rel="stylesheet" type="text/css" />
+	<link href="Css/sweet-alert.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="Scripts/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="Scripts/sweet-alert.min.js"></script>
+	<link rel="shortcut icon" href="Images/search.ico" />
+  	<link rel="icon" type="image/x-icon" href="Images/search.ico" />
 	<meta charset="utf-8" />
 </head>
 <body>
@@ -14,7 +20,6 @@
 	<p>
 		<span class="title1">F</span><span class="title2">i</span><span class="title3">n</span><span class="title4">e</span><span class="title1">f</span><span class="title2">o</span><span class="title5">u</span><span class="title3">n</span><span class="title4">d</span> 
 	</p></a></div>
-	<!-- <span class="title1">Ch</span><span class="title2">och</span><span class="title3">oï</span> -->
 		<form id="Envoi_Formulaire">
 			<div id="recherche">
 				<p>
@@ -30,14 +35,11 @@
 
 	<div id="Informations_Submit"></div>
 	
-	<div id="Contenu">
 	<div id="astuce">
 		<p>To download the report, please enter <a href="#" class="add_search">#report#</a> in the search bar above.</p> 
 		<p>To index new documents, enter <a href="#" class="add_search">#new_index#</a> in the search bar above.</p> 
 	</div>
-	</div>
 </div>
-
 </body>
 <script type="text/javascript" src="Scripts/scripts-index.js"></script>
 </html>
