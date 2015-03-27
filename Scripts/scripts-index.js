@@ -11,18 +11,19 @@ $("#Envoi_Formulaire").on('reset',function()
 
 $("#Envoi_Formulaire").on('submit',function() 
 {
-	var Recherche =  $("#recherche-id").val();
-	$("#Informations_Submit").empty().fadeIn("Slow").html("<p><img src='Images/ajax-loader.gif' alt='Loading'/></p><p class='orange'>Searching...<br/>This can take few secondes.</p>");
+	var Recherche = $("#recherche-id").val();
+	if (Recherche != '#new_index#')
+		$("#Informations_Submit").empty().fadeIn("Slow").html("<p><img src='Images/ajax-loader.gif' alt='Loading'/></p><p class='orange'>Searching...<br/>This can take few secondes.</p>");
 
 	$.post( "cible.php", {recherche: Recherche}, function( data ) {
-
+		$("#Informations_Submit").empty().fadeIn("Slow").html(data);
 		if (data == 1)
 		{
 			$("#Informations_Submit").empty().fadeIn("Slow").html("<p><img src='Images/erreur.png' alt='Erreur'/></p><p class='rouge'>Your request should be at least 2 characters !</p>");
 		}
 		else if(data == 8)
 		{
-			$("#Informations_Submit").empty().fadeIn("Slow").html("<p><a href='Rapport/rapport.pdf' target='_blank'> <img src='Images/pdf.png' alt='PDF' width='60'/></a> <br/> Please click the icon to view the report</p>");
+			$("#Informations_Submit").empty().fadeIn("Slow").html("<p><a href='rapport.pdf' target='_blank'> <img src='Images/pdf.png' alt='PDF' width='60'/></a> <br/> Please click the icon to view the report</p>");
 
 		}
 		else if (data == 5)

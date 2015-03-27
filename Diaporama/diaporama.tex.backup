@@ -4,6 +4,16 @@
 \usepackage[frenchb]{babel}
 \usepackage[T1]{fontenc}
 
+\AtBeginSection[]
+{
+  \begin{frame}
+  \frametitle{Sommaire}
+  \tableofcontents[currentsection]
+  \end{frame} 
+}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
 \usetheme{Warsaw}
 
 
@@ -13,27 +23,204 @@
 
 \title{Recherche Documentaire}
 \author{Racine Mattieu - Jamet Jason - Grandjean Guillaume}
-\date{}
+
+\institute{Faculté des Sciences}
+
+\date{23 Mars 2015}
+
 
 \begin{document}
 
-    \begin{frame}[allowframebreaks] %Si trop de texte, le met sur une autre page en plus
-    \frametitle{Recherche Documentaire}
-    \begin{center}
-    \includegraphics[width=0.25\textwidth]{finefound.eps}
+    \begin{frame}
+     \titlepage
+    \end{frame}
 
-    le meilleur moteur de recherche Documentaire !    
-    \end{center}
+
+    \begin{frame}[allowframebreaks] %Si trop de texte, le met sur une autre page en plus
+      \frametitle{Recherche Documentaire}
+      \begin{center}
+       \includegraphics[width=0.7\textwidth]{finefound.eps}
+      \end{center}
+      \begin{center}
+      Le meilleur moteur de recherche Documentaire !    
+      \end{center}
     \end{frame}
     
+
+    \section{Introduction}
+    \begin{frame}
+     \frametitle{Introduction}
+     \begin{itemize}
+      \item Cahier des charges
+	\begin{itemize}
+	  \item Développement d'un moteur de recherche
+	  \item Recherches correspondant à un corpus de documents
+	  \item Interface pour fournir sa requête
+	\end{itemize}
+      \item Outils utilisés
+	\begin{itemize}
+	  \item Php - Mysql
+	  \item Pecl : collection de bibliothèques PHP (pspell / stem)
+	  \item QuickHash
+	\end{itemize}
+     \end{itemize}
+
+    \end{frame}
+    
+    \section{Fonctionnalités implémentées}
+    \subsection{Indexation}
+    \begin{frame}
+     \frametitle{Indexation}
+     \begin{itemize}
+      \item Tableau en mémoire
+      \item Base de données
+      \item Table de Hachage
+      \item Nouvelle indexation
+     \end{itemize}
+
+    \end{frame}
     
     \begin{frame}
+     \frametitle{Indexation}
+     \framesubtitle{Tableau en mémoire}
+     \begin{center}
+     \includegraphics[width=0.8\textwidth]{MemTab.eps}
+     \end{center}
+    \end{frame}
+    
+    \begin{frame}
+     \frametitle{Indexation}
+     \framesubtitle{Base de données}
+     \includegraphics[width=0.3\textwidth]{document.eps}
+     \hfill
+    \includegraphics[width=0.3\textwidth]{position.eps}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{word.eps}
+    \end{frame}
+    
+    \begin{frame}
+     \frametitle{Indexation}
+     \framesubtitle{Table de Hachage}
+     \begin{center}
+     \includegraphics[width=0.8\textwidth]{hash.eps}
+     \end{center}
+
+    \end{frame}
+    
+    \begin{frame}
+     \frametitle{Indexation}
+     \framesubtitle{Nouvelle indexation}
+     \begin{center}
+     \includegraphics[width=0.3\textwidth]{newfile.eps}
+     \end{center}
      
-     \tableofcontents
+     \begin{enumerate}
+      \item Ajout d'un nouveau document au répertoire
+      \item Lancer \#new\_index\#
+      \begin{itemize}
+      \item Vide les tables
+      \item Traite les nouveaux fichiers
+     \end{itemize}
+     \end{enumerate}
+
+
+    \end{frame}
+    
+
+    
+    \subsection{Traitement des requêtes}  
+    \begin{frame}
+     \frametitle{Traitement des requêtes}
+     \begin{itemize}
+      \item StopWords (a - this ...)
+      \item KeyWords (and - or - not)
+      \item Stemmer (judges => judg)
+      \item Pspell (democrcy => democracy)
+     \end{itemize}
      
+    \end{frame}
+     
+     \begin{frame}
+	\begin{block}{Requête}
+	And his dictatorship and makes democracy
+	\end{block}
+	
+	\begin{block}{Tableau de requête}
+	  array(2) { [0]=> array(2) { [0]=> array(2) { [0]=> string(3) "his" [1]=> string(12) 
+    "dictatorship"} [1]=> array(2) { [0]=> string(5) "makes" [1]=> string(9) "democracy"} 
+    \textcolor{red}{[1]=> array(1) { [0]=> string(3) "and" } } }}		
+	\end{block}
+	
+	\setbeamercolor{block title}{fg=white,bg=green}
+	\begin{block}{Résultat}
+	AP891216-0001\&word=dictatorship,make,democraci\&stopWord=his
+	\end{block}
+
+	
+    \end{frame}
+
+   
+    
+    \subsection{Pertinence des documents}  
+    \begin{frame}
+     \frametitle{Pertinence des documents}
+     \begin{itemize}
+     \item Parcours de l'index
+      \item Calcul du taux de pertinence
+     \end{itemize}
+
+    \end{frame}
+    
+    \begin{frame}
+     \frametitle{Pertinence des documents}
+     \framesubtitle{Parcours de l'index}
+     \begin{center}
+     \includegraphics[width=0.8\textwidth]{sqlVSphp.eps}
+     \end{center}
+
+    \end{frame}
+    
+     \begin{frame}
+     \frametitle{Calcul du taux de pertinence}
+     \framesubtitle{Calcul du poids}
+     TF : fréquence du terme \hfill
+     \includegraphics[width=0.3\textwidth]{tf.eps}
+     \medbreak
+     IDF: Importance des termes moins fréquents
+     \hfill
+     \includegraphics[width=0.3\textwidth]{idf.eps}
+     \medbreak
+     Prise en compte de la position des mots
+    \end{frame}
+    
+    \begin{frame}
+     \frametitle{Calcul du taux de pertinence}
+     \framesubtitle{Keywords}
+     \begin{center}
+      Inutilité des Keywords
+     \end{center}
+
+     
+     \begin{center}
+      
+       \includegraphics[width=0.6\textwidth]{AND_OR.eps}
+     \end{center}
+
+
     \end{frame}
 
     
+    \subsection{Interface de recherche}  
+    \begin{frame}
+     \frametitle{Interface de recherche}
+     \begin{itemize}
+      \item Conviviale
+      \item Simple d'utilisation
+     \end{itemize}
+    \end{frame}
+    
+    
+
     
     
     

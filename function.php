@@ -8,12 +8,6 @@ try {
 catch (Exception $e) {
   die('Erreur : ' . $e->getMessage());
 }
-//getArrayOfDocByWord("north");
-//showDocWithResult("korea", "AP890101-0015") ;
-//getArrayOfDocByArrayWord(array("north", "korea"), 1) ;
-//getNumberOfWordByArrayDoc(array("north", "korea"), getArrayOfDocByArrayWord(array("north", "korea")));
-//getMinimalDocWithResult(array("north", "korea"), "AP891228-0004");
-//getArrayOfPosByArrayWordAndDoc(array("junior", "steven", "traveled", "miles"), "AP891218-0001");
 
 
 function getArrayOfDocByWord($word) {
@@ -36,74 +30,12 @@ function getArrayOfDocByWord($word) {
   }
   $response->closeCursor();
 }
-// function getArrayOfDocByArrayWord($arrayWord, $page) {
-//     global $bdd;
-//
-//     $pagination = 10;
-//     $limit_start = ($page - 1) * $pagination;
-//     $qMarks = str_repeat('?,', count($arrayWord) - 1) . '?';
-//
-//     if (!isset($_SESSION['Compteur_Page']))
-//     {
-//         $req = $bdd->prepare("SELECT count(distinct id_document)
-//                               FROM document, position, word
-//                               WHERE word IN ($qMarks)
-//                                       AND id_document = document.id
-//                                       AND id_word = word.id
-//
-//           ");
-//           $req->execute($arrayWord);
-//           $nb_total=$req->fetch()[0];
-//           $_SESSION['Compteur_Page'] = $nb_total;
-//           $req->closeCursor();
-//     }
-//     else
-//     {
-//       echo "Création";
-//       $nb_total = $_SESSION['Compteur_Page'];
-//     }
-//
-//     $response = $bdd->prepare("SELECT name, (SUM(log) * COUNT(log) * COUNT(log) * COUNT(log)) as pagerank
-//                                 FROM
-//                                   (SELECT *,(LOG(document / occurence_total) * (occurence_dans_document / nombre_mot_doc)) as log
-//                                     FROM
-//                                     (SELECT word.word, document.name,
-//                                     (SELECT count(*)
-//                                       FROM position WHERE position.id_word = word.id and position.id_document = document.id) as occurence_dans_document,
-//                                     (SELECT count(*) as nb_document
-//                                       FROM document) as document,
-//                                     (SELECT count(distinct id_document) as nb_occurence
-//                                       FROM position WHERE position.id_word = word.id) as occurence_total,
-//                                     (SELECT count(*)
-//                                       FROM position WHERE id_document = document.id) as nombre_mot_doc
-//                                   FROM document, position, word
-//                                   WHERE word IN ($qMarks)
-//                                   AND id_document = document.id
-//                                   AND id_word = word.id
-//                                   GROUP BY id_document, id_word) as newtable) as newtable2
-//                                   GROUP BY name
-//                                   ORDER BY `pagerank`  DESC
-//                                   LIMIT ".$limit_start.", ".$pagination."
-//     ");
-//     $response->execute($arrayWord);
-//
-//     $res = array();
-//     while ($donnees = $response->fetch()) {
-//       $res[$donnees[0]] = $donnees[1];
-//     }
-//     $response->closeCursor();
-//     $nb_pages = ceil($nb_total/ $pagination);
-//
-//     return array($nb_total, $nb_pages, $res);
-//   }
+
 function getArrayOfDocByArrayWord($arrayWord, $page) {
   global $bdd;
   $pagination = 10;
   $limit_start = ($page - 1) * $pagination;
 
-
-
-  //$qMarks = str_repeat('?|', count($arrayWord) - 1) . '?';
   $arrayWord = implode("|",$arrayWord);
 
    if (!isset($_SESSION['arrayResult'])) {
@@ -153,12 +85,7 @@ function getArrayOfDocByArrayWord($arrayWord, $page) {
 
 
     arsort($res);
-    // foreach($res as $file => $rtf) {
-    //   $resultat[] = $file;
-    //   // echo "$file.....";
-    //   // echo $rtf;
-    //   // echo "<br/>";
-    // }
+
     $nb_total = count($res);
     $resByPage;
     $i=0;
@@ -199,8 +126,7 @@ function similarity($array1, $array2) {
       }
     }
   }
-  // echo $res;
-  // echo "<BR/>";
+
   return $res;
 }
 
@@ -302,7 +228,7 @@ function showDocWithResult($arWord, $doc, $stopWord) {
   $file = explode("-", $doc)[0];
 
 
-  if ((!$fp = fopen("Ressources/AP/$file","r"))) {
+  if ((!file_exists("Ressources/AP/$file[0]") && (!$fp = fopen("Ressources/AP/$file","r")))) {
       throw new Exception("File Not Found", 1);
   }
   else
@@ -330,14 +256,9 @@ function showDocWithResult($arWord, $doc, $stopWord) {
           foreach ($arrayWord as $value) {
             if(!in_array($value, $arrayWordStopping))
             {
-              // if(in_array(strtolower(stem_english(trim($value, ",."))), $arrayword))
-              // {
-              //     $text .= "<span style='color:red;'>$value </span>";
-              //     $count++;
-              // }
               $trouve = false;
               foreach ($arrayword as $val) {
-                if (ereg("^$val$", strtolower(stem_english(trim($value,",.")))))
+                if (ereg("^$val$", strtolower(stem_english(trim($value,",.``")))))
                 {
                   $text .= "<span style='color:red;'>$value </span>";
                   $count++;
@@ -357,7 +278,7 @@ function showDocWithResult($arWord, $doc, $stopWord) {
         }
         $text .= "</p>";
         $title = '<p class="Title_Result"> Document ' . $file . '</p> <br/> <br/>';
-        $title .= '<p>Search words : <span style="color:red;">'.$word.'</span> ('.$count.' found ) </p>';
+        $title .= '<p>Search words : <span style="color:red;">'.$word.'</span> ('.$count.' found) </p>';
         break;
       }
       else

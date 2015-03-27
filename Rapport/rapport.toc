@@ -2,4 +2,16 @@
 \contentsline {section}{\numberline {1}Introduction}{2}
 \contentsline {subsection}{\numberline {1.1}Cahier des charges}{2}
 \contentsline {subsection}{\numberline {1.2}Outils utilis\IeC {\'e}s}{2}
-\contentsline {section}{\numberline {2}Fonctionnalit\IeC {\'e}s impl\IeC {\'e}ment\IeC {\'e}es}{2}
+\contentsline {section}{\numberline {2}Fonctionnalit\IeC {\'e}s impl\IeC {\'e}ment\IeC {\'e}es}{4}
+\contentsline {subsection}{\numberline {2.1}Indexation}{4}
+\contentsline {subsubsection}{\numberline {2.1.1}Tableaux en M\IeC {\'e}moires}{4}
+\contentsline {subsubsection}{\numberline {2.1.2}Base de Donn\IeC {\'e}es}{4}
+\contentsline {subsubsection}{\numberline {2.1.3}Table de Hachage}{4}
+\contentsline {subsubsection}{\numberline {2.1.4}Nouvelle Indexation}{4}
+\contentsline {subsection}{\numberline {2.2}Traitement des requ\IeC {\^e}tes}{5}
+\contentsline {subsection}{\numberline {2.3}Pertinence des Documents}{6}
+\contentsline {subsubsection}{\numberline {2.3.1}Calcul du taux de pertinence}{6}
+\contentsline {subsubsection}{\numberline {2.3.2}Parcours de l'index}{6}
+\contentsline {subsubsection}{\numberline {2.3.3}Pagination}{7}
+\contentsline {subsection}{\numberline {2.4}Interface de recherche}{8}
+\contentsline {section}{\numberline {3}Conclusion}{8}

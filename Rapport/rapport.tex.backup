@@ -6,9 +6,31 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{lmodern}
-\usepackage{graphicx}
+\usepackage{fancybox, graphicx}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{fancyhdr}
 
 \usepackage{geometry}
+
+\definecolor{mygreen}{rgb}{0.2,0.6,0.2}
+
+
+\lstset{ % General setup for the package
+	language=PHP,
+	backgroundcolor=\color{mygreen},
+	basicstyle=\small\sffamily,
+	numbers=left,
+ 	numberstyle=\tiny,
+	frame=tb,
+	tabsize=4,
+	columns=fixed,
+	showstringspaces=false,
+	showtabs=false,
+	keepspaces,
+	commentstyle=\color{red},
+	keywordstyle=\color{blue}
+}
 
 
 \geometry{letterpaper}
@@ -24,11 +46,10 @@
   \begin{titlepage}
   \centering
       {\large \textsc{Faculté des Sciences}}\\
-      \textsc{Langages de Script}\\
+      \textsc{Recherche Documentaire}\\
     \vspace{1cm}
-      \includegraphics[width=0.25\textwidth]{ua.eps}
+      
       \hfill
-      \includegraphics[width=0.35\textwidth]{rails.eps}\\
     \vspace{1cm}
       {\large\textbf{	\@date\\
        Master 1 Informatique}}\\
@@ -40,21 +61,18 @@
     \vspace{2em}
         {\large \@author} \\
         \hrulefill
-    \vfill
+    \vspace{4cm}
+    
+    
+      \shadowbox{\includegraphics[width=0.8\textwidth]{finefound}}
+
+    
         
   \end{titlepage}
 \makeatother
 
 
-\pagestyle{fancy}
 
-\renewcommand{\headheight}{13pt}  
-\renewcommand{\headrulewidth}{2pt} 
-\renewcommand{\footrulewidth}{2pt} 
-\renewcommand{\headsep}{15pt}
-\lhead{}
-\chead{}
-\rhead{\leftmark }
 
 
 \newpage
@@ -70,17 +88,264 @@ Pour réaliser ces différentes choses, une interface conviviale devait être co
 Enfin une stop list (stop words) devait être défini (contenant les mots les plus courants) et les requêtes données par l'utilisateur peuvent avoir différentes formes.
 
 \subsection{Outils utilisés}
-Pour ce projet, nous avons choisis d'utiliser le PHP. Il nous semblait évident que l'indexation, les recherches seraient moins optimisées, cependant, nous pouvions proposer une belle interface en un minimum de temps.
+Pour ce projet, nous avons choisis d'utiliser le PHP. Il nous semblait évident que l'indexation, ainsi que les recherches seraient moins optimisées, cependant, nous pouvions proposer une belle interface en un minimum de temps.
+\newline
 Comme nous l'expliquerons plus tard, grâce à différents moyens et une certaine persévérance, nous avons réussi à optimiser au maximum l'indexation des documents.
+\medbreak
+Pour la gestion des données, et l'insertion de ces dernières dans l'interface, nous avons utilisé \verb|Mysql|.
+Afin d'installer le serveur MySQL, le langage PHP5, mais aussi divers module, vous pouvez lancer la commande suivante dans un terminal :
+\newline
+\verb|sudo apt-get install apache2 php5 mysql-server libapache2-mod-php5 php5-mysql|
 
-Plusieurs librairies ont dûes être installées :
+\medbreak
+Que se soient pour réaliser les différents éléments du sujet, ou afin d'optimiser l'indexation, plusieurs librairies ou extensions ont dû être installées : 
+
+Afin de pouvoir utiliser un Stemmer, l'extension Pecl devait être installée : \verb|sudo apt-get install pecl|. 
+C'est cette dernière qui nous permet d'installer la librairie Stem : \verb|pecl install stem|.
+\newline
+Plusieurs choix de langage sont proposés lors de l'installation tel que l'anglais que nous avons utilisé.
+Après l'installation, il suffit de rajouter les quelques lignes suivantes :
+\newline
+
+\verb|À copier dans le fichier php.ini (/etc/php5/apache2/php.ini)|
+\begin{lstlisting}
+;;;;;;;;;;;;;;;;;;;;;;
+; Dynamic Extensions ;
+;;;;;;;;;;;;;;;;;;;;;;
+
+extension=stem.so
+extension=quickhash.so
+
+\end{lstlisting}
+
+Comme il le sera expliqué plus tard, c'est l'extension \verb|quickhash.so| qui permettra une Optimisation de l'indexation. Son installation se fait par la commande suivante dans un terminal : 
+\verb|pecl install quickhash| tout en rajoutant quickhash.so dans php.ini.
+
+De plus il faudra modifier le fichier \verb|my.cnf| qui se trouve dans le dossier \verb|/etc/mysql/| :
+\begin{lstlisting}
+[mysqld]
+tmp_table_size=256M
+max_heap_table_size=256M
+\end{lstlisting}
+
+et enfin il faudra redémarrer le serveur avec la commande : \verb|sudo service mysql restart|.
+ 
+
+\newpage
+
+En ce qui concerne la correction orthographique, qui est proposée à chaque recherche, elle est géréé par la bibliothèque \verb|Pspell|.
+Son installation se fait grâce aux commandes suivantes (en ligne de commande) :
+
+\begin{lstlisting}
+sudo apt-get install libpspell-dev 
+sudo apt-get install php5-pspell
+sudo apt-get install aspell-en
+\end{lstlisting}
+
+Son utilisation se fait comme suit : 
+
+\begin{lstlisting}
+private function is_correct_word($word,$pspell_link)
+    {
+        if (pspell_check($pspell_link, $word))
+            return true;
+	...
+    }
+
+private function verifcation_words($words){
+
+$pspell_link = pspell_new("en");
+...
+@$sugg = pspell_suggest($pspell_link, $word)[0];
+...
+$NewRequest .= $sugg;
+}
+\end{lstlisting}
+
+
+
+
+
+\newpage
+\section{Fonctionnalités implémentées}
+\subsection{Indexation}
+\subsubsection{Tableaux en Mémoires}
+Lors de notre première approche, afin de concevoir une indexation correcte, nous avons décidé de créer un tableau associatif en mémoire dont chaque case contenait le mot et un autre tableau associatif contenant le nom et les positions du mot dans le document.
+\medbreak
+Cependant, nous nous sommes vite aperçu que la structure n'était pas optimisée pour la situation (au bout d'une heure l'indexation n'avait toujours pas atteint 1000 documents sur 3102). Pour pallier à ce problème nous avons donc pensé à une base de données.
+\subsubsection{Base de Données}
+On a donc utilisé une base de données dans le but de résoudre le problème de mémoire. En effet en \verb|"MySql"| les tables peuvent être en \verb|"Memory"| ce qui permet d'enregistrer les données en mémoire vive et non sur l'espace disque. Cela à pour effet d'augmenter la rapidité de traitement des requêtes \verb|"SQL"| (Indexation réduite à 15 minutes).
+\medbreak
+Lors de notre première ébauche les fichiers contenant les documents sont \verb|"parsés"| et les titres de ceux-ci sont insérés dans la base de données, chaque nouveau mot est ajouté dans un tableau et inséré dans un string qui représente la requête \verb|"SQL"| a inséré à la fin de l'indexation dans la base de données.
+\medbreak
+A l'instar des nouveaux mot lu, la position de ceux-ci sont inséré dans un string qui représente la requête \verb|"SQL"| à exécuter dès la fin de l'indexation afin de les insérer dans la base de données. En effet le fait d'insérer les éléments en une seule requête au lieu d'ajouter élément par élément est plus optimisé.
+\subsubsection{Table de Hachage}
+Cependant, pour les 500 premiers documents cette méthode semblait rapide mais nous nous sommes vite aperçu que le fait d'ajouter un mot dans un tableau afin de vérifier que celui-ci avait déjà été traité n'était pas optimiser.
+\medbreak
+En effet, plus il y a d'élément dans le tableau plus le parcours est long. Nous avons décidé de chercher à optimiser ce mécanisme car nous savions que le \verb|"PHP"| était un langage puissant et pouvait faire mieux que cela.
+\medbreak
+Nous avons donc après de nombreuses recherches sur internet trouvé la classe \verb|"QuickHashStringInt"| qui gèrent les données non plus dans un tableau mais avec une table de hachage. Les résultats attendus était ne se sont pas fait attendre en effet cette dernière nous a permis de réduire le temps d’indexation à 8 secondes.
+\medbreak
+Toujours en quête d'optimisation, nous avons modifier quelques fonctions de \verb|"PHP"| afin d'utiliser uniquement celle écrite en \verb|"PERL"| (Plus rapide) ce qui nous a permis d’obtenir un temps de 6 secondes pour l'indexation.
+\subsubsection{Nouvelle Indexation}
+Les clients peuvent ajouter des nouveaux documents à indexer en les plaçant dans le répertoire prédéfini et relancer une indexation qui prendra en compte ces derniers.
+\medbreak
+Les tables sont vidées à chaque nouvelle indexation.
+
+\subsection{Traitement des requêtes}
+Il existe 3 types de requêtes :
+
 \begin{itemize}
- \item prout1
- \item prout2
- \item prout3
+ \item \#new\_index\#: permet d'indexer les documents.
+ \item \#rapport\#: permet d'afficher le rapport.
+ \item Recherche de la requête dans les documents.
 \end{itemize}
 
+Lorsqu'un utilisateur lance une recherche (après qu'une première indexation ait été faite), nous enlevons d'abord les mots de la requête qui sont contenus dans la liste des StopWords, 
+et de même nous enlevons les mots ``or'', ``and'', ``not'' (appelés KeyWords) en début et fin de chaîne car ils n'ont pas lieu d'y être.
+Nous effectuons enfin la requête sans les divers mots enlevés.
 
-\section{Fonctionnalités implémentées}
+Cette requête se définit en plusieurs étapes. Tout d'abord, les KeyWords restant sont regroupés dans un tableau tandis que les derniers mots sont contenus dans un autre tableau.
+\newline
+\verb|Exemple|
+\newline
+
+\fbox{\begin{minipage}{0.9\textwidth}
+
+ \textbf{And his dictatorship and makes democracy}
+ 
+\textit{array(2) { [0]=> array(2) { [0]=> array(2) { [0]=> string(3) "his" [1]=> string(12) 
+ "dictatorship"} [1]=> array(2) { [0]=> string(5) "makes" [1]=> string(9) "democracy"} 
+ [1]=> array(1) { [0]=> string(3) "and" } } } }
+ 
+ \textcolor{green}{AP891216-0001\&word=dictatorship,make,democraci\&stopWord=his}
+\end{minipage}
+}
+\medbreak
+
+
+C'est sur les mots contenus dans ce dernier tableau que l'on effectue le Stemmer, afin de rechercher tous les mots qui ressemblent à ceux recherchés.
+
+\verb|Exemple|
+
+\begin{lstlisting}
+echo stem_english('judges'); //Returns the stem, "judg"
+\end{lstlisting}
+
+\newpage
+
+\subsection{Pertinence des Documents}
+\subsubsection{Calcul du taux de pertinence}
+Dans le but d'obtenir une liste de documents trié de facon cohérente, nous nous sommes basés sur la méthode "TF-IDF".
+Cette méthode prend en compte la fréquence des termes dans un document, la taille du document, et le nombre d'occurence des mots dazns tous les documents. ( somme pour chaques mots de ( NombreOccurenceMotDansDocument / NombreMotsDansDocument ) * log ( NombreDocumentTotal / NombreDocumentOuMotsApparait )). Grace à ce calcul, nous pouvons déterminer un taux de pertinance pour chaque document. Plus ce taux sera élevé, plus le document sera bien classé dans la liste des résultats.
+
+Afin d'obtenir les documents les plus pertinants possible, nous avons décidé de prendre en compte les positions des différents mots trouvés, leurs ordre, et la présence de chacun d'entre eux.
+
+\subsubsection{Parcours de l'index}
+
+Suite à une phase d'étude sur la manière la plus performante de récupérer une liste de documents cohérente, nous sommes parvenus à deux solutions.
+La première consiste à n'utiliser que des requêtes SQL, afin de récuperer une liste de documents, déjà triés par taux de pertinence (calcul effectués dans la requete). Elle à pour avantage de pouvoir limité le nombre de résultats récupéré. L'inconvénient est la complexité de la requête (beaucoup d'imbrications), et de ce fait, l'exectution de celle-ci est lente (jusqu'à 3 secondes pour charger 10 résultats).
+\begin{lstlisting}
+ SELECT name, (SUM(log) * COUNT(log) * COUNT(log) * COUNT(log)) as pagerank
+ FROM
+	(SELECT *,
+	 (LOG(
+	 		document / occurence_total
+	 	  ) * (occurence_dans_document / nombre_mot_doc)
+	 	 ) as log
+     FROM
+         (SELECT word.word, document.name,
+          (SELECT count(*)
+           FROM position 
+           WHERE position.id_word = 
+           		 word.id and position.id_document = 
+           		 document.id) as occurence_dans_document,
+          (SELECT count(*) as nb_document
+           FROM document) as document,
+          (SELECT count(distinct id_document) as nb_occurence
+           FROM position WHERE position.id_word = word.id) as occurence_total,
+          (SELECT count(*)
+           FROM position WHERE id_document = document.id) as nombre_mot_doc
+          FROM document, position, word
+          WHERE word IN ($qMarks)
+          AND id_document = document.id
+          AND id_word = word.id
+          GROUP BY id_document, id_word) as newtable) as newtable2
+          GROUP BY name
+          ORDER BY `pagerank`  DESC
+          LIMIT ".$limit_start.", ".$pagination."
+\end{lstlisting}
+
+
+La seconde solution utilise également des requetes SQL, mais ici, seul la liste non triée de document est récuperée.
+Ce tri ce fait par la suite grâce à du PHP. La requete SQL sera donc beaucoup plus simple et executée de facon presque instantanée, les calculs effectués en PHP sont également très rapides (récuperation et traitement des résultats en moin d'une seconde).
+\newline
+
+Requete:
+\begin{lstlisting}
+ SELECT word, document.name, position
+ FROM document, position, word
+ WHERE word  REGEXP ?
+ AND id_document = document.id
+ AND id_word = word.id
+ GROUP BY document.name, word, position
+ ORDER BY word.word ASC
+\end{lstlisting}
+
+Traitement:
+
+\begin{lstlisting}
+ foreach($idf as $word => &$arrayFileArrayPos) {
+  $numberOfFile = count($arrayFileArrayPos);
+  foreach($arrayFileArrayPos as $file => &$arrayPos) {
+    $response = $bdd->prepare(" SELECT count(*)
+                                FROM position
+                                WHERE id_document = 	(   SELECT id
+                                                          FROM document
+                                                          WHERE name = ?)
+                              ");
+    $response->execute(array($file));
+    $bf = $response->fetch()[0];
+    $log = (count($arrayPos)/$bf)*log(3102/$numberOfFile);
+    $response->closeCursor();
+
+
+    if(array_key_exists($file, $res)) {
+      $res[$file] += $log*10 + (similarity($oldArrayPos[$file], $arrayPos));
+    } else {
+      $res[$file] = $log;
+    }
+    $oldArrayPos[$file] = $arrayPos;
+  }
+ }
+\end{lstlisting}
+
+
+Après implémentation de ces solutions, nous avons fait le choix d'effectuer les traitements via PHP, nous pouvons ainsi avoir des réponse plus rapides.
+
+\subsubsection{Pagination}
+
+Dans un soucis de performance et d'ergonomie, nous avons décidé d'integrer la notion de pagination.
+En effet l'affichage de la totalité des solutions étant extrêmement long, nous avons établis un affichage maximum de 10 résultats simultané. La liste de tous les résultats est découpée en paquet de 10, sérialisée, puis stockée dans une variable de session.
+Ainsi, le parcour de l'index et les traitements ne sont effectués qu'une seule fois. 
+Le changement de page ce fait donc de façon presque instantané, puisque qu'il sagira seulement d'une lecture dans un tableau.
+
+
+\newpage
+
+\subsection{Interface de recherche}
+
+Le projet a été conçu de façon à proposer une interface conviviale. Elle permet de faire une recherche rapide, et d'accéder aux résultats tout aussi rapidement.
+À tout moment, l'utilisateur peut choisir de faire une nouvelle indexation ou d'afficher le pdf du rapport. Il n'a qu'à cliquer sur l'un des 2 liens proposés. 
+Pour les autres requêtes demandées, le nombre de documents dans lesquels les mots recherchés apparaissent, est défini, et la liste de ces documents est affichée à la suite.
+\medbreak
+En cliquant sur le titre de l'un d'eux, le contenu du document est affiché, et l'on retrouve le nombre de fois que les mots de la requête apparaissent, et sont dans une couleur différente
+au texte. Les KeyWords sont aussi colorés car ils appartiennent bien à la requête.
+
+\section{Conclusion}
+Ce projet est pour le moins une réussite. En effet, nous sommes partis sur du Php afin de proposer une interface conviviale avec une utilisation facile, sans nous préoccuper de l'optimisation.
+Avec persévérence et et beaucoup de patience, nous avons chercher à optimiser le plus possible l'indexation. Nous avons découvert la classe \verb|"QuickHashStringInt"| qui permet de gérer les différentes données à partir d'une table de Hachage.
+Cela a eu pour conséquence de diminuer amplement le temps d'indexation.
+
 
 \end{document}

@@ -1,5 +1,8 @@
 \beamer@endinputifotherversion {3.24pt}
 \select@language {french}
-\beamer@sectionintoc {1}{Pr\IeC {\'e}sentation du projet}{4}{0}{1}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
 \beamer@sectionintoc {2}{Fonctionnalit\IeC {\'e}s impl\IeC {\'e}ment\IeC {\'e}es}{5}{0}{2}
-\beamer@sectionintoc {3}{Recherche Optimale}{6}{0}{3}
+\beamer@subsectionintoc {2}{1}{Indexation}{6}{0}{2}
+\beamer@subsectionintoc {2}{2}{Traitement des requ\IeC {\^e}tes}{11}{0}{2}
+\beamer@subsectionintoc {2}{3}{Pertinence des documents}{13}{0}{2}
+\beamer@subsectionintoc {2}{4}{Interface de recherche}{17}{0}{2}

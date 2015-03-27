@@ -74,9 +74,6 @@ class Parser implements Serializable
             {
                 $Tableau_Request = $this->TrimValue($Req, $KeyWords);
                 $Tableau_Operateur_Word = $this->ParserRequestKeyWords($Tableau_Request);
-                // var_dump($Tableau_Operateur_Word);
-                
-                 // var_dump($Tableau_Operateur_Word[0]);
 
                 $Request_New = array();
                 $Tab_StopWord = array();
@@ -93,6 +90,7 @@ class Parser implements Serializable
                     }
                 }
                 
+                $CountStopWord = count($Tab_StopWord);
                 $Request_New = str_replace(",", '', $Request_New);
 
                $verifcation_words = $this->verifcation_words($Tableau_Request);
@@ -100,37 +98,30 @@ class Parser implements Serializable
                 echo '<div id="New_Spelling"><span class="Try_Spelling"> Try with this spelling: </span><a href="#" class="add_search">'.$verifcation_words.'</a></div>
                     <script>$(".add_search").on(\'click\',function() {$("#recherche-id").val(this.text);});</script><div class="clear"></div>';;
 
-                if(count($Request_New) > 0 )
-                {
+
                     $TableauArrayOfDocByArrayWord = getArrayOfDocByArrayWord($Request_New, $page);
                     $nb_result = $TableauArrayOfDocByArrayWord[0];
                 
                 
                     echo '<div id="Liste_Doc"><ul>';
                     if ($nb_result == 0)
-                        echo '<p class="Result_NoFound">No documents correspond to the specified search words<br /> <span class="No_Found"> ('. $Req .')  </span> </p><br /><br />';
+                        echo '<p class="Result_NoFound">Any document correspond to the specified search words<br /> <span class="No_Found"> ('. $Req .')  </span> </p><br /><br />';
 
                     else if ($nb_result == 1)
                         echo '<p class="Counter_Doc">'.$nb_result.' result has been found</p><br /><br />';
                     else
                         echo '<p class="Counter_Doc">'.$nb_result.' results have been found</p><br /><br />';
 
-                    
+                    $StopWord_url = "";
+                    if ($CountStopWord > 0) 
+                        $StopWord_url = '&stopWord='.implode(",",$Tab_StopWord).'';
+
+
                     foreach ($TableauArrayOfDocByArrayWord[2] as $doc => $num) {
-                        if(isset($Tab_StopWord))
-                        {
-                            echo '<li><a href="document.php?doc='.$doc.'&word='.implode(",",$Request_New).'&stopWord='.implode(",",$Tab_StopWord).'" target=_blank >'.$doc.'</a> ('.$num.')<br/>
-                            <span class="green">document.php?doc='.$doc.'&word='.implode(",",$Request_New).'</span><br/>
+                            echo '<li><a href="document.php?doc='.$doc.'&word='.implode(",",$Request_New).''.$StopWord_url.'" target=_blank >'.$doc.'</a> ('.$num.')<br/>
+                            <span class="green">document.php?doc='.$doc.'&word='.implode(",",$Request_New).''.$StopWord_url.'</span><br/>
                             <span class="Contenu_Doc">'.getMinimalDocWithResult($TableauArrayOfDocByArrayWord[2], $doc).'</span>
                             </li><br/>';
-                        }
-                        else
-                        {
-                            echo '<li><a href="document.php?doc='.$doc.'&word='.implode(",",$Request_New).'" target=_blank >'.$doc.'</a> ('.$num.')<br/>
-                            <span class="green">document.php?doc='.$doc.'&word='.implode(",",$Request_New).'</span><br/>
-                            <span class="Contenu_Doc">'.getMinimalDocWithResult($TableauArrayOfDocByArrayWord[2], $doc).'</span>
-                            </li><br/>';
-                        }
                     }
                     echo '</ul></div>';
 
@@ -163,11 +154,6 @@ class Parser implements Serializable
                     return false;
                     });
                     </script>';
-                }
-                else {
-                    throw new Exception("Error Word in StopWord", 3);
-                    
-                }
             }
         }
     }
@@ -434,14 +420,6 @@ public function buildIndex()
     private function ParserStemmer($word)
     {
        return stem_english($word);
-    }
-
-    public function isIndex()
-    {
-        if (!file_exists("Ressources/index.txt"))
-            return true;
-        else
-            return false;
     }
 
 	private function Attribut_Existe($name)
